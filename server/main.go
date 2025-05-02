@@ -10,6 +10,9 @@ import (
 func main() {
 
 	config.Init()
+	db := config.ConnectDB()
+
+	println(db)
 
 	app := fiber.New()
 
