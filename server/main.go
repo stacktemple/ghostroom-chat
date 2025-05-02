@@ -4,14 +4,24 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/stacktemple/realtime-chat/server/config"
 )
 
 func main() {
+
+	config.Init()
+	db := config.ConnectDB()
+
+	println(db)
+
 	app := fiber.New()
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, StackTemple!")
 	})
 
-	log.Fatal(app.Listen(":3000"))
+	println(config.Cfg.DatabaseURL)
+	println(config.Cfg.JWTSecret)
+
+	log.Fatal(app.Listen(":" + config.Cfg.Port))
 }
