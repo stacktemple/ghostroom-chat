@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from "./pages/Home";
 import Layout from "./layouts/Layout";
-import Chatroom from "./pages/Chatroom";
+import Chatroom from "./pages/ChatRoom";
 import NotFound from "./pages/NotFound";
 import Test from "./pages/Test";
 
