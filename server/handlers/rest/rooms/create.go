@@ -28,20 +28,26 @@ func (h *RoomHandler) CreateRoom(c *fiber.Ctx) error {
 	if err := c.BodyParser(&payload); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid JSON")
 	}
-	if payload.Name == "" || payload.GuestName == "" {
+
+	// Validate Name
+	if payload.Name == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "Room name is required.")
+	}
+	if len(payload.Name) < MinNameLength || len(payload.Name) > MaxNameLength {
 		return fiber.NewError(fiber.StatusBadRequest, "Room name must be between "+strconv.Itoa(MinNameLength)+" and "+strconv.Itoa(MaxNameLength)+" characters")
 	}
 
-	// check length
-	if len(payload.Name) < MinNameLength || len(payload.Name) > MaxGuestNameLength {
-		return fiber.NewError(fiber.StatusBadRequest, "Room name must be between "+strconv.Itoa(MinNameLength)+" and "+strconv.Itoa(MaxNameLength)+" characters")
+	// Validate GuestName
+	if payload.GuestName == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "Guest name is required.")
 	}
 	if len(payload.GuestName) < MinGuestNameLength || len(payload.GuestName) > MaxGuestNameLength {
-		return fiber.NewError(fiber.StatusBadRequest, "Guest name must be between "+strconv.Itoa(MinGuestNameLength)+" and "+strconv.Itoa(MaxGuestNameLength)+" characters)")
+		return fiber.NewError(fiber.StatusBadRequest, "Guest name must be between "+strconv.Itoa(MinGuestNameLength)+" and "+strconv.Itoa(MaxGuestNameLength)+" characters") // Corrected: Removed extra parenthesis
 	}
 
+	// Validate Password (if provided)
 	if payload.Password != "" && (len(payload.Password) < MinPasswordLength || len(payload.Password) > MaxPasswordLength) {
-		return fiber.NewError(fiber.StatusBadRequest, "Password must be 4–12 characters")
+		return fiber.NewError(fiber.StatusBadRequest, "Password must be between "+strconv.Itoa(MinPasswordLength)+" and "+strconv.Itoa(MaxPasswordLength)+" characters") // Suggestion: Dynamic message
 	}
 
 	// check room exists
