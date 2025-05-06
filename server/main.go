@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stacktemple/realtime-chat/server/config"
+	"github.com/stacktemple/realtime-chat/server/handlers"
 )
 
 func main() {
@@ -15,6 +16,10 @@ func main() {
 	println(db)
 
 	app := fiber.New()
+
+	handlers.RegisterRoutes(app, handlers.Dependencies{
+		AppName: "StackTemple", DB: db, JWTSecret: config.Cfg.JWTSecret,
+	})
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, StackTemple!")
