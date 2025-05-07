@@ -1,4 +1,4 @@
-package health
+package health_test
 
 import (
 	"net/http"
@@ -8,6 +8,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
+	"github.com/stacktemple/realtime-chat/server/handlers/rest/health"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +22,7 @@ func TestCheck(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"?"}).AddRow(true))
 
 	app := fiber.New()
-	healthHandler := HealthHandler{
+	healthHandler := health.HealthHandler{
 		AppName: "StackTemple",
 		DB:      sqlxDB,
 	}
