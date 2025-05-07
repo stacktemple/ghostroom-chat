@@ -1,35 +1,15 @@
 package rooms
 
 import (
-	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/stacktemple/realtime-chat/server/auth"
 )
 
 func (h *RoomHandler) CheckToken(c *fiber.Ctx) error {
-	authHeader := c.Get("Authorization")
-	if authHeader == "" {
-		return fiber.NewError(fiber.StatusUnauthorized, "Missing token")
-	}
-
-	// Remove "Bearer " prefix if exists
-	const prefix = "Bearer "
-	tokenStr := strings.TrimPrefix(authHeader, prefix)
-
-	claims, err := auth.ParseToken(h.JWTSecret, tokenStr)
-	if err != nil {
-		return fiber.NewError(fiber.StatusUnauthorized, "Invalid token")
-	}
-
-	roomName, ok1 := claims["room_name"].(string)
-	guestName, ok2 := claims["guest_name"].(string)
-	issuedDate, ok3 := claims["issued_date"].(string)
-
-	if !ok1 || !ok2 || !ok3 {
-		return fiber.NewError(fiber.StatusUnauthorized, "Invalid claims")
-	}
+	roomName := c.Locals(ctxRoomName).(string)
+	guestName := c.Locals(ctxGuestName).(string)
+	issuedDate := c.Locals(ctxIssuedDate).(string)
 
 	// Check date is today
 	loc, _ := time.LoadLocation("Asia/Bangkok")
@@ -51,8 +31,9 @@ func (h *RoomHandler) CheckToken(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"message":    "Token valid",
-		"room_name":  roomName,
-		"guest_name": guestName,
+		"message":     "Token valid",
+		"room_name":   roomName,
+		"guest_name":  guestName,
+		"issued_date": issuedDate,
 	})
 }

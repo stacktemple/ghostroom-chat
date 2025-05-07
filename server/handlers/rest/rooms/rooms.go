@@ -3,6 +3,7 @@ package rooms
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
+	"github.com/stacktemple/realtime-chat/server/middleware"
 )
 
 type RoomHandler struct {
@@ -11,6 +12,12 @@ type RoomHandler struct {
 	repo      *RoomRepo
 }
 
+const (
+	ctxRoomName   = "room_name"
+	ctxGuestName  = "guest_name"
+	ctxIssuedDate = "issued_date"
+)
+
 func RegisterRoutes(r fiber.Router, h *RoomHandler) {
 	if h.repo == nil {
 		h.repo = &RoomRepo{DB: h.DB}
@@ -18,5 +25,6 @@ func RegisterRoutes(r fiber.Router, h *RoomHandler) {
 	r.Get("/today", h.ListTodayRooms)
 	r.Post("/", h.CreateRoom)
 	r.Post("/join", h.JoinRoom)
-	r.Get("/verify-token", h.CheckToken)
+	r.Get("/verify-token", middleware.JWTGuard(h.JWTSecret), h.CheckToken)
+	r.Delete("/:name", middleware.JWTGuard(h.JWTSecret), h.DeleteRoom)
 }

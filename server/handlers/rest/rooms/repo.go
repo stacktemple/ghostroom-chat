@@ -83,3 +83,16 @@ func (r *RoomRepo) GuestExistsToday(roomID string, guestName string) (bool, erro
 	err := r.DB.Get(&exists, query, roomID, guestName)
 	return exists, err
 }
+
+func (r *RoomRepo) IsGuestOwner(roomID, guestName string) (bool, error) {
+	var isOwner bool
+	query := `SELECT is_owner FROM room_guests WHERE room_id = $1 AND guest_name = $2`
+	err := r.DB.Get(&isOwner, query, roomID, guestName)
+	return isOwner, err
+}
+
+func (r *RoomRepo) DeleteRoomByID(roomID string) error {
+	query := `DELETE FROM rooms WHERE id = $1`
+	_, err := r.DB.Exec(query, roomID)
+	return err
+}
