@@ -82,10 +82,12 @@ func (h *RoomHandler) CreateRoom(c *fiber.Ctx) error {
 	}
 
 	// create token
+	loc, _ := time.LoadLocation("Asia/Bangkok")
+
 	claims := map[string]any{
 		"room_name":   payload.Name,
 		"guest_name":  payload.GuestName,
-		"issued_date": time.Now().Format("2006-01-02"),
+		"issued_date": time.Now().In(loc).Format("2006-01-02"),
 	}
 	token, err := auth.CreateToken(h.JWTSecret, claims, 24)
 	if err != nil {
