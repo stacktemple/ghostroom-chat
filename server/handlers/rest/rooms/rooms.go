@@ -17,4 +17,6 @@ func RegisterRoutes(r fiber.Router, h *RoomHandler) {
 	}
 	r.Get("/today", h.ListTodayRooms)
 	r.Post("/", h.CreateRoom)
+	r.Post("/join", h.JoinRoom)
+	r.Get("/verify-token", h.CheckToken)
 }
