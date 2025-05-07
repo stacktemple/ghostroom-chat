@@ -13,12 +13,12 @@ func (h *RoomHandler) DeleteRoom(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusUnauthorized, "Token room mismatch")
 	}
 
-	room, err := h.repo.GetRoomByNameToday(roomNameToken)
+	room, err := h.Repo.GetRoomByNameToday(roomNameToken)
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, "Room not found")
 	}
 
-	isOwner, err := h.repo.IsGuestOwner(room.ID, guestName)
+	isOwner, err := h.Repo.IsGuestOwner(room.ID, guestName)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to check owner")
 	}
@@ -26,7 +26,7 @@ func (h *RoomHandler) DeleteRoom(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusForbidden, "Only owner can delete room")
 	}
 
-	if err := h.repo.DeleteRoomByID(room.ID); err != nil {
+	if err := h.Repo.DeleteRoomByID(room.ID); err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to delete room")
 	}
 

@@ -19,13 +19,13 @@ func (h *RoomHandler) CheckToken(c *fiber.Ctx) error {
 	}
 
 	// Check room exists
-	room, err := h.repo.GetRoomByNameToday(roomName)
+	room, err := h.Repo.GetRoomByNameToday(roomName)
 	if err != nil {
 		return fiber.NewError(fiber.StatusUnauthorized, "Room not found")
 	}
 
 	// Check guest exists
-	exists, err := h.repo.GuestExistsToday(room.ID, guestName)
+	exists, err := h.Repo.GuestExistsToday(room.ID, guestName)
 	if err != nil || !exists {
 		return fiber.NewError(fiber.StatusUnauthorized, "Guest not found in room")
 	}

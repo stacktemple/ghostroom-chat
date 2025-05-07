@@ -51,7 +51,7 @@ func (h *RoomHandler) CreateRoom(c *fiber.Ctx) error {
 	}
 
 	// check room exists
-	exists, err := h.repo.RoomExistsToday(payload.Name)
+	exists, err := h.Repo.RoomExistsToday(payload.Name)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "DB error: "+err.Error())
 	}
@@ -72,11 +72,11 @@ func (h *RoomHandler) CreateRoom(c *fiber.Ctx) error {
 	}
 
 	// create room
-	roomID, err := h.repo.CreateRoom(payload.Name, passwordHash, needPass)
+	roomID, err := h.Repo.CreateRoom(payload.Name, passwordHash, needPass)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Create room failed: "+err.Error())
 	}
-	err = h.repo.AddGuest(roomID, payload.GuestName, true)
+	err = h.Repo.AddGuest(roomID, payload.GuestName, true)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Add guest failed: "+err.Error())
 	}

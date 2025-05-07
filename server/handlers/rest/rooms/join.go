@@ -24,7 +24,7 @@ func (h *RoomHandler) JoinRoom(c *fiber.Ctx) error {
 	}
 
 	// get room
-	room, err := h.repo.GetRoomByNameToday(payload.Name)
+	room, err := h.Repo.GetRoomByNameToday(payload.Name)
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, "Room not found")
 	}
@@ -38,7 +38,7 @@ func (h *RoomHandler) JoinRoom(c *fiber.Ctx) error {
 	}
 
 	// check guest exists
-	exists, err := h.repo.GuestExistsToday(room.ID, payload.GuestName)
+	exists, err := h.Repo.GuestExistsToday(room.ID, payload.GuestName)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "DB error: "+err.Error())
 	}
@@ -47,7 +47,7 @@ func (h *RoomHandler) JoinRoom(c *fiber.Ctx) error {
 	}
 
 	// add guest
-	if err := h.repo.AddGuest(room.ID, payload.GuestName, false); err != nil {
+	if err := h.Repo.AddGuest(room.ID, payload.GuestName, false); err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Add guest failed: "+err.Error())
 	}
 

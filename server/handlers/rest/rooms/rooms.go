@@ -9,7 +9,7 @@ import (
 type RoomHandler struct {
 	DB        *sqlx.DB
 	JWTSecret string
-	repo      *RoomRepo
+	Repo      *RoomRepo
 }
 
 const (
@@ -19,8 +19,8 @@ const (
 )
 
 func RegisterRoutes(r fiber.Router, h *RoomHandler) {
-	if h.repo == nil {
-		h.repo = &RoomRepo{DB: h.DB}
+	if h.Repo == nil {
+		h.Repo = &RoomRepo{DB: h.DB}
 	}
 	r.Get("/today", h.ListTodayRooms)
 	r.Post("/", h.CreateRoom)
