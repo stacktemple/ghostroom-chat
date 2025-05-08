@@ -13,8 +13,9 @@ type RoomRepo struct {
 func (r *RoomRepo) RoomExistsToday(name string) (bool, error) {
 	var exists bool
 	query := `SELECT EXISTS (
-		SELECT 1 FROM rooms WHERE name = $1 AND created_date = CURRENT_DATE
+		SELECT 1 FROM rooms WHERE name = $1 AND created_at::date = CURRENT_DATE
 	)`
+
 	err := r.DB.Get(&exists, query, name)
 	return exists, err
 }
@@ -22,10 +23,10 @@ func (r *RoomRepo) RoomExistsToday(name string) (bool, error) {
 func (r *RoomRepo) CreateRoom(name string, passwordHash *string, needPass bool) (string, error) {
 	var roomID string
 	query := `
-		INSERT INTO rooms (name, password_hash, need_pass, created_date)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO rooms (name, password_hash, need_pass)
+		VALUES ($1, $2, $3)
 		RETURNING id`
-	err := r.DB.Get(&roomID, query, name, passwordHash, needPass, time.Now().Format("2006-01-02"))
+	err := r.DB.Get(&roomID, query, name, passwordHash, needPass)
 	return roomID, err
 }
 
@@ -38,6 +39,7 @@ func (r *RoomRepo) AddGuest(roomID string, guestName string, isOwner bool) error
 }
 
 type RoomInfo struct {
+	ID        string    `db:"id" json:"id"`
 	Name      string    `db:"name" json:"name"`
 	NeedPass  bool      `db:"need_pass" json:"need_pass"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
@@ -46,9 +48,9 @@ type RoomInfo struct {
 func (r *RoomRepo) GetTodayRooms() ([]RoomInfo, error) {
 	var rooms []RoomInfo
 	query := `
-		SELECT name, need_pass, created_at
+		SELECT id,name, need_pass, created_at
 		FROM rooms
-		WHERE created_date = CURRENT_DATE
+		WHERE created_at::date = CURRENT_DATE
 		ORDER BY created_at DESC`
 	err := r.DB.Select(&rooms, query)
 	return rooms, err
@@ -65,7 +67,7 @@ func (r *RoomRepo) GetRoomByNameToday(name string) (*RoomDetail, error) {
 	query := `
 		SELECT id, password_hash, need_pass
 		FROM rooms
-		WHERE name = $1 AND created_date = CURRENT_DATE`
+		WHERE name = $1 AND created_at::date = CURRENT_DATE`
 	err := r.DB.Get(&room, query, name)
 	if err != nil {
 		return nil, err
