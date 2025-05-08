@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS rooms (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     password_hash TEXT,
-    created_at TIMESTAMP DEFAULT now(),
-    created_date DATE NOT NULL
+    need_pass BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ  DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS room_guests (
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS room_guests (
     room_id UUID NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
     guest_name TEXT NOT NULL,
     is_owner BOOLEAN DEFAULT FALSE,
-    joined_at TIMESTAMP DEFAULT now(),
+    joined_at TIMESTAMPTZ DEFAULT now(),
     UNIQUE (room_id, guest_name)
 );
 
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS messages (
     room_id UUID NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
     guest_name TEXT NOT NULL,
     content TEXT NOT NULL,
-    sent_at TIMESTAMP DEFAULT now()
+    sent_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- +goose Down

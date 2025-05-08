@@ -1,5 +1,8 @@
+import { useParams } from "react-router-dom";
+
 function Chatroom() {
-  return <div>Chatroom</div>;
+  const { roomName } = useParams();
+  return <div>Chatroom {roomName}</div>;
 }
 
 export default Chatroom;

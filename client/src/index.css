@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+@theme {
+  /* Surface Zones */
+  --color-surface: #ffffff;
+  --color-surface-header: #111827;
+  --color-surface-footer: #1f2937;
+  --color-surface-muted: #f9fafb;
+  --color-surface-input: #f1f5f9;
+
+  /* Chat Bubble */
+  --color-chat-me-bg: #7c3aed;
+  --color-chat-me-text: #ffffff;
+  --color-chat-other-bg: #e5e7eb;
+  --color-chat-other-text: #111827;
+
+  /* Text */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-inverse: #ffffff;
+
+  /* Action */
+  --color-primary: #7c3aed;
+  --color-secondary: #6366f1;
+  --color-error: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #facc15;
+}
+
 @layer utilities {
   .mycont {
     width: 100%;
