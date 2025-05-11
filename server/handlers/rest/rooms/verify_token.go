@@ -21,6 +21,9 @@ func (h *RoomHandler) CheckToken(c *fiber.Ctx) error {
 	// Check room exists
 	room, err := h.Repo.GetRoomByNameToday(roomName)
 	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "Database error: "+err.Error())
+	}
+	if room == nil {
 		return fiber.NewError(fiber.StatusUnauthorized, "Room not found")
 	}
 

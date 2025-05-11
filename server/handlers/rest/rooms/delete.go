@@ -15,6 +15,9 @@ func (h *RoomHandler) DeleteRoom(c *fiber.Ctx) error {
 
 	room, err := h.Repo.GetRoomByNameToday(roomNameToken)
 	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "Database error: "+err.Error())
+	}
+	if room == nil {
 		return fiber.NewError(fiber.StatusNotFound, "Room not found")
 	}
 
