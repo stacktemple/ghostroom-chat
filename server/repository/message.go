@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -21,7 +22,18 @@ type Message struct {
 	SentAt    time.Time `db:"sent_at" json:"sent_at"`
 }
 
+var validTypes = map[string]bool{
+	"create": true,
+	"join":   true,
+	"text":   true,
+}
+
 func (r *MessageRepository) AddMessage(roomName, guestName, content, msgType string) error {
+
+	if !validTypes[msgType] {
+		return errors.New("invalid message type")
+	}
+
 	_, err := r.DB.Exec(`
 		INSERT INTO messages (room_id, guest_name, content, type)
 		SELECT id, $1, $2, $3 FROM rooms WHERE name = $4
