@@ -23,10 +23,18 @@ CREATE TABLE IF NOT EXISTS messages (
     room_id UUID NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
     guest_name TEXT NOT NULL,
     content TEXT NOT NULL,
+    type TEXT NOT NULL DEFAULT 'text',
     sent_at TIMESTAMPTZ DEFAULT now()
 );
 
+
+CREATE INDEX IF NOT EXISTS idx_rooms_name ON rooms (name);
+CREATE INDEX IF NOT EXISTS idx_messages_room_id_sent_at ON messages (room_id, sent_at DESC);
+
+
 -- +goose Down
+DROP INDEX IF EXISTS idx_messages_room_id_sent_at;
+DROP INDEX IF EXISTS idx_rooms_name;
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS room_guests;
 DROP TABLE IF EXISTS rooms;

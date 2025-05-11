@@ -2,15 +2,20 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 	"github.com/jmoiron/sqlx"
 	"github.com/stacktemple/realtime-chat/server/handlers/rest/health"
+	"github.com/stacktemple/realtime-chat/server/handlers/rest/messages"
 	"github.com/stacktemple/realtime-chat/server/handlers/rest/rooms"
+	"github.com/stacktemple/realtime-chat/server/handlers/socket/chat"
+	"github.com/stacktemple/realtime-chat/server/repository"
 )
 
 type Dependencies struct {
 	AppName   string
 	DB        *sqlx.DB
 	JWTSecret string
+	ChatHub   *chat.Hub
 }
 
 func RegisterRoutes(app *fiber.App, deps Dependencies) {
@@ -23,8 +28,21 @@ func RegisterRoutes(app *fiber.App, deps Dependencies) {
 	healthGroup.Get("/", healthHandler.Check)
 
 	rooms.RegisterRoutes(api.Group("/rooms"), &rooms.RoomHandler{
-		DB:        deps.DB,
 		JWTSecret: deps.JWTSecret,
+		Repo:      repository.NewRoomRepository(deps.DB),
 	})
 
+	messages.RegisterRoutes(api.Group("/messages"), &messages.MessageHandler{
+		JWTSecret: deps.JWTSecret,
+		Repo:      repository.NewMessageRepository(deps.DB),
+	})
+
+	app.Use("/ws/chat", func(c *fiber.Ctx) error {
+		if websocket.IsWebSocketUpgrade(c) {
+			return c.Next()
+		}
+		return fiber.ErrUpgradeRequired
+	})
+
+	app.Get("/ws/chat/:room", websocket.New(chat.NewHandler(deps.DB, deps.JWTSecret, deps.ChatHub)))
 }

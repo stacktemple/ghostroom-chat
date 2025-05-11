@@ -2,14 +2,13 @@ package rooms
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/jmoiron/sqlx"
 	"github.com/stacktemple/realtime-chat/server/middleware"
+	"github.com/stacktemple/realtime-chat/server/repository"
 )
 
 type RoomHandler struct {
-	DB        *sqlx.DB
 	JWTSecret string
-	Repo      *RoomRepo
+	Repo      *repository.RoomRepository
 }
 
 const (
@@ -19,9 +18,6 @@ const (
 )
 
 func RegisterRoutes(r fiber.Router, h *RoomHandler) {
-	if h.Repo == nil {
-		h.Repo = &RoomRepo{DB: h.DB}
-	}
 	r.Get("/today", h.ListTodayRooms)
 	r.Post("/", h.CreateRoom)
 	r.Post("/join", h.JoinRoom)

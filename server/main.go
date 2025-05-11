@@ -7,6 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/stacktemple/realtime-chat/server/config"
 	"github.com/stacktemple/realtime-chat/server/handlers"
+	"github.com/stacktemple/realtime-chat/server/handlers/socket/chat"
+	"github.com/stacktemple/realtime-chat/server/repository"
 )
 
 func main() {
@@ -31,16 +33,16 @@ func main() {
 
 	app.Use(cors.New())
 
+	messageRepo := repository.NewMessageRepository(db)
+	chatHub := chat.NewHub(messageRepo)
+	go chatHub.Run()
+
 	handlers.RegisterRoutes(app, handlers.Dependencies{
-		AppName: "StackTemple", DB: db, JWTSecret: config.Cfg.JWTSecret,
+		AppName: "StackTemple", DB: db, JWTSecret: config.Cfg.JWTSecret, ChatHub: chatHub,
 	})
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, StackTemple!")
-	})
-
-	println(config.Cfg.DatabaseURL)
-	println(config.Cfg.JWTSecret)
+	// println(config.Cfg.DatabaseURL)
+	// println(config.Cfg.JWTSecret)
 
 	log.Fatal(app.Listen(":" + config.Cfg.Port))
 }

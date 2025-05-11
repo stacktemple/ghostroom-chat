@@ -1,5 +1,5 @@
 MIGRATION_DIR = ./migration
-
+DB_URL = postgres://st-user:st-pass@localhost:5432/chat-db?sslmode=disable
 migrate-up:
 	@echo "Running migration up on: $(DB_URL)"
 	goose -dir $(MIGRATION_DIR) postgres "$(DB_URL)" up 

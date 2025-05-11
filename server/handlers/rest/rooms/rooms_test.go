@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
 	"github.com/stacktemple/realtime-chat/server/handlers/rest/rooms"
+	"github.com/stacktemple/realtime-chat/server/repository"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,10 +16,9 @@ func setup(t *testing.T) (*fiber.App, sqlmock.Sqlmock, *rooms.RoomHandler) {
 	assert.NoError(t, err)
 
 	sqlxDB := sqlx.NewDb(db, "sqlmock")
-	repo := &rooms.RoomRepo{DB: sqlxDB}
+	repo := repository.NewRoomRepository(sqlxDB)
 
 	h := &rooms.RoomHandler{
-		DB:        sqlxDB,
 		JWTSecret: "test-secret",
 		Repo:      repo,
 	}

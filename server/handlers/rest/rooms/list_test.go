@@ -14,11 +14,11 @@ func TestListTodayRooms_Success(t *testing.T) {
 	app, mock, handler := setup(t)
 
 	// Mock result: 2 rooms
-	mock.ExpectQuery("SELECT name, need_pass, created_at").
+	mock.ExpectQuery("SELECT id, name, need_pass, created_at").
 		WillReturnRows(
-			sqlmock.NewRows([]string{"name", "need_pass", "created_at"}).
-				AddRow("Room A", false, time.Now()).
-				AddRow("Room B", true, time.Now()),
+			sqlmock.NewRows([]string{"id", "name", "need_pass", "created_at"}).
+				AddRow(1, "Room A", false, time.Now()).
+				AddRow(2, "Room B", true, time.Now()),
 		)
 
 	app.Get("/api/rooms/today", handler.ListTodayRooms)
