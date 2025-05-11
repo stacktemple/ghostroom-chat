@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CreateRoomPayload } from "../types/room";
 import { useCreateRoom } from "../hooks/useCreateRoom";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   onClose: () => void;
@@ -15,6 +16,8 @@ function CreateRoomModal({ onClose }: Props) {
 
   const [needPass, setNeedPass] = useState(false);
   const { mutate, isPending, error } = useCreateRoom();
+
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -34,6 +37,7 @@ function CreateRoomModal({ onClose }: Props) {
           `st-name-${data.issued_date}-${form.name}`,
           form.guest_name
         );
+        navigate(`/room/${form.name}`);
         onClose();
       },
     });
