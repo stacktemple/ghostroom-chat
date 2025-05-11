@@ -26,12 +26,20 @@ func (h *RoomHandler) JoinRoom(c *fiber.Ctx) error {
 	// get room
 	room, err := h.Repo.GetRoomByNameToday(payload.Name)
 	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "Database error: "+err.Error())
+	}
+	if room == nil {
 		return fiber.NewError(fiber.StatusNotFound, "Room not found")
 	}
 
 	// check password if needed
 	if room.NeedPass {
-		match := auth.ComparePassword(room.PasswordHash, payload.Password)
+
+		if room.PasswordHash == nil {
+			return fiber.NewError(fiber.StatusInternalServerError, "Missing password hash for protected room")
+		}
+
+		match := auth.ComparePassword(*room.PasswordHash, payload.Password)
 		if !match {
 			return fiber.NewError(fiber.StatusUnauthorized, "Incorrect password")
 		}
@@ -64,6 +72,8 @@ func (h *RoomHandler) JoinRoom(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Token error: "+err.Error())
 	}
+
+	_ = h.MsgRepo.AddMessage(payload.Name, payload.GuestName, "joined the room", "join")
 
 	return c.JSON(fiber.Map{
 		"message":     "Joined room",

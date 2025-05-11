@@ -9,6 +9,7 @@ import (
 type RoomHandler struct {
 	JWTSecret string
 	Repo      *repository.RoomRepository
+	MsgRepo   *repository.MessageRepository
 }
 
 const (

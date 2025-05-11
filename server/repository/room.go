@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -49,18 +50,23 @@ func (r *RoomRepository) GetTodayRooms() ([]RoomInfo, error) {
 }
 
 type RoomDetail struct {
-	ID           string `db:"id"`
-	PasswordHash string `db:"password_hash"`
-	NeedPass     bool   `db:"need_pass"`
+	ID           string  `db:"id"`
+	PasswordHash *string `db:"password_hash"`
+	NeedPass     bool    `db:"need_pass"`
 }
 
 func (r *RoomRepository) GetRoomByNameToday(name string) (*RoomDetail, error) {
 	var room RoomDetail
 	query := `SELECT id, password_hash, need_pass FROM rooms WHERE name = $1 AND created_at::date = CURRENT_DATE`
 	err := r.DB.Get(&room, query, name)
+
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, err
 	}
+
 	return &room, nil
 }
 

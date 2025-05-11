@@ -17,10 +17,12 @@ func setup(t *testing.T) (*fiber.App, sqlmock.Sqlmock, *rooms.RoomHandler) {
 
 	sqlxDB := sqlx.NewDb(db, "sqlmock")
 	repo := repository.NewRoomRepository(sqlxDB)
+	msgRepo := repository.NewMessageRepository(sqlxDB)
 
 	h := &rooms.RoomHandler{
 		JWTSecret: "test-secret",
 		Repo:      repo,
+		MsgRepo:   msgRepo,
 	}
 
 	app := fiber.New()

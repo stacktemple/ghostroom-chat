@@ -95,6 +95,8 @@ func (h *RoomHandler) CreateRoom(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "Token error: "+err.Error())
 	}
 
+	_ = h.MsgRepo.AddMessage(payload.Name, payload.GuestName, "created the room", "create")
+
 	// Return token
 	return c.JSON(fiber.Map{
 		"message":     "Room created",

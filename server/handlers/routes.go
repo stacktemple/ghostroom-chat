@@ -30,6 +30,7 @@ func RegisterRoutes(app *fiber.App, deps Dependencies) {
 	rooms.RegisterRoutes(api.Group("/rooms"), &rooms.RoomHandler{
 		JWTSecret: deps.JWTSecret,
 		Repo:      repository.NewRoomRepository(deps.DB),
+		MsgRepo:   repository.NewMessageRepository(deps.DB),
 	})
 
 	messages.RegisterRoutes(api.Group("/messages"), &messages.MessageHandler{
