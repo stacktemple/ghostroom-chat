@@ -7,7 +7,10 @@ import (
 )
 
 func (h *MessageHandler) ListMessages(c *fiber.Ctx) error {
-	roomName := c.Params("roomName")
+
+	roomName := c.Locals(ctxRoomName).(string)
+	guestName := c.Locals(ctxGuestName).(string)
+
 	if roomName == "" {
 		return fiber.NewError(fiber.StatusBadRequest, "Missing room name")
 	}
@@ -23,5 +26,9 @@ func (h *MessageHandler) ListMessages(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "DB error: "+err.Error())
 	}
 
-	return c.JSON(messages)
+	return c.JSON(fiber.Map{
+		"guest_name": guestName,
+		"messages":   messages,
+	})
+
 }

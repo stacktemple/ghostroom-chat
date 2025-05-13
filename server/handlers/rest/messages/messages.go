@@ -7,6 +7,12 @@ import (
 	"github.com/stacktemple/realtime-chat/server/repository"
 )
 
+const (
+	ctxRoomName   = "room_name"
+	ctxGuestName  = "guest_name"
+	ctxIssuedDate = "issued_date"
+)
+
 type MessageHandler struct {
 	DB        *sqlx.DB
 	JWTSecret string
@@ -14,5 +20,5 @@ type MessageHandler struct {
 }
 
 func RegisterRoutes(r fiber.Router, h *MessageHandler) {
-	r.Get("/:roomName", middleware.JWTGuard(h.JWTSecret), h.ListMessages)
+	r.Get("/", middleware.JWTGuard(h.JWTSecret), h.ListMessages)
 }
