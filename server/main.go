@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/stacktemple/realtime-chat/server/config"
+	"github.com/stacktemple/realtime-chat/server/cronjob"
 	"github.com/stacktemple/realtime-chat/server/handlers"
 	"github.com/stacktemple/realtime-chat/server/handlers/socket/chat"
 	"github.com/stacktemple/realtime-chat/server/repository"
@@ -16,7 +17,7 @@ func main() {
 	config.Init()
 	db := config.ConnectDB()
 
-	println(db)
+	cronjob.StartCleaner(db)
 
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
