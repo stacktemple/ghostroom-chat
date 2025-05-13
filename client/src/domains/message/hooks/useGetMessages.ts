@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { Message } from "../types/message";
 import { MessageAPI } from "../api";
+import { GetMessagesResponse } from "../types/message";
 
 export const useGetMessages = (roomName: string, token: string) => {
-  return useQuery<Message[], Error>({
+  return useQuery<GetMessagesResponse, Error>({
     queryKey: ["messages", roomName],
     queryFn: async () => {
-      const res = await fetch(MessageAPI.LIST(roomName), {
+      const res = await fetch(MessageAPI.LIST, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

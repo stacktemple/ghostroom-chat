@@ -6,15 +6,16 @@ function Home() {
   const [open, setOpen] = useState(false);
 
   return (
-    <>
+    <div className="flex-1 overflow-y-auto min-h-0">
       <div className="mycont py-6 space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-bold text-text-primary">
             🧱 Rooms Today
           </h1>
+
           <button
             onClick={() => setOpen(true)}
-            className="bg-primary text-text-inverse px-4 py-2 rounded text-sm hover:opacity-90 cursor-pointer"
+            className="bg-primary text-text-inverse px-4 py-2 rounded text-sm hover:opacity-90"
           >
             + Create Room
           </button>
@@ -24,7 +25,7 @@ function Home() {
       </div>
 
       {open && <CreateRoomModal onClose={() => setOpen(false)} />}
-    </>
+    </div>
   );
 }
 

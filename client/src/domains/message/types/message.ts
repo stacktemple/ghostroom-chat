@@ -4,3 +4,8 @@ export type Message = {
   type: string;
   sent_at: string;
 };
+
+export type GetMessagesResponse = {
+  guest_name: string;
+  messages: Message[];
+};
