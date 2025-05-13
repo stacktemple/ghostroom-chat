@@ -1,7 +1,12 @@
 package main
 
 import (
+	"context"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -45,5 +50,25 @@ func main() {
 	// println(config.Cfg.DatabaseURL)
 	// println(config.Cfg.JWTSecret)
 
-	log.Fatal(app.Listen(":" + config.Cfg.Port))
+	go func() {
+		if err := app.Listen(":" + config.Cfg.Port); err != nil {
+			log.Panicf("Failed to start server: %v", err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
+
+	log.Println("Shutting down gracefully...")
+
+	//Gracefully shutdown fiber server with timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := app.ShutdownWithContext(ctx); err != nil {
+		log.Fatalf("Server forced to shutdown: %v", err)
+	}
+
+	log.Println("Server stopped cleanly")
+
 }
