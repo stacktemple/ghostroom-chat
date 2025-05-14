@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -39,7 +40,10 @@ func main() {
 
 	app.Use(cors.New(
 		cors.Config{
-			AllowOrigins: "https://ghostroom.stacktemple.com, http://localhost:5173",
+			AllowOriginsFunc: func(origin string) bool {
+				return origin == "https://ghostroom.stacktemple.com" ||
+					strings.HasPrefix(origin, "http://localhost:")
+			},
 		},
 	))
 
