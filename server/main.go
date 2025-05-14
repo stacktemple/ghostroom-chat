@@ -37,7 +37,11 @@ func main() {
 		},
 	})
 
-	app.Use(cors.New())
+	app.Use(cors.New(
+		cors.Config{
+			AllowOrigins: "https://ghostroom.stacktemple.com, http://localhost:5173",
+		},
+	))
 
 	messageRepo := repository.NewMessageRepository(db)
 	chatHub := chat.NewHub(messageRepo)
