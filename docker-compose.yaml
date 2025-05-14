@@ -1,0 +1,39 @@
+services:
+  ghostroom-db:
+    image: postgres:16
+    container_name: st-chat-db
+    environment:
+      TZ: Asia/Bangkok
+      POSTGRES_USER: st-user
+      POSTGRES_PASSWORD: st-pass
+      POSTGRES_DB: chat-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ghostroom-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  ghostroom-server:
+    build: ./server
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./server/.env
+    healthcheck:
+      test:
+        ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      - ghostroom-db
+    restart: unless-stopped
+
+  ghostroom-client:
+    build: ./client
+    ports:
+      - "3001:80"
+    restart: unless-stopped
+
+volumes:
+  ghostroom-data:

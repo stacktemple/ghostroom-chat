@@ -1,0 +1,17 @@
+services:
+  st-chat-db:
+    image: postgres:16
+    container_name: st-chat-db
+    environment:
+      TZ: Asia/Bangkok
+      POSTGRES_USER: st-user
+      POSTGRES_PASSWORD: st-pass
+      POSTGRES_DB: chat-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - st-chat-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  st-chat-data:
