@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stacktemple/realtime-chat/server/auth"
+	"github.com/stacktemple/realtime-chat/server/handlers/socket/chat"
 )
 
 type JoinRoomPayload struct {
@@ -73,7 +74,13 @@ func (h *RoomHandler) JoinRoom(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "Token error: "+err.Error())
 	}
 
-	_ = h.MsgRepo.AddMessage(payload.Name, payload.GuestName, "joined the room", "join")
+	h.ChatHub.Broadcast <- chat.BroadcastMessage{
+		RoomName:  payload.Name,
+		GuestName: payload.GuestName,
+		Type:      "join",
+		Content:   "joined the room",
+		Time:      time.Now(),
+	}
 
 	return c.JSON(fiber.Map{
 		"message":     "Joined room",

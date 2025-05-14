@@ -2,6 +2,7 @@ package rooms
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/stacktemple/realtime-chat/server/handlers/socket/chat"
 	"github.com/stacktemple/realtime-chat/server/middleware"
 	"github.com/stacktemple/realtime-chat/server/repository"
 )
@@ -10,6 +11,7 @@ type RoomHandler struct {
 	JWTSecret string
 	Repo      *repository.RoomRepository
 	MsgRepo   *repository.MessageRepository
+	ChatHub   *chat.Hub
 }
 
 const (
