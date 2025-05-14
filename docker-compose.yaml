@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: st-pass
       POSTGRES_DB: chat-db
     ports:
-      - "5432:5432"
+      - "6000:5432"
     volumes:
       - ghostroom-data:/var/lib/postgresql/data
     restart: unless-stopped
