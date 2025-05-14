@@ -8,6 +8,11 @@ function Home() {
   return (
     <div className="flex-1 overflow-y-auto min-h-0">
       <div className="mycont py-6 space-y-4">
+        <div className="text-center text-sm text-text-secondary mb-4">
+          GhostRoom Chat 👻 — A safe, anonymous space to chat freely.
+          <br />
+          Create open or password-protected rooms and start the conversation.
+        </div>
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-bold text-text-primary">
             🧱 Rooms Today
