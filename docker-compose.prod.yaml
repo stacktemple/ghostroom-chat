@@ -1,0 +1,64 @@
+services:
+  ghostroom-db:
+    image: postgres:16
+    container_name: ghostroom-db
+    environment:
+      TZ: Asia/Bangkok
+      POSTGRES_USER: st-user
+      POSTGRES_PASSWORD: st-pass
+      POSTGRES_DB: chat-db
+    ports:
+      - "6000:5432"
+    volumes:
+      - ghostroom-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  ghostroom-server:
+    build: ./server
+    container_name: ghostroom-server
+    labels:
+    - "traefik.enable=true"
+    - "traefik.docker.network=stacktemple_network"
+    - >
+      traefik.http.routers.ghostroom-server.rule=
+      Host(`ghostroom.stacktemple.com`)
+      && (PathPrefix(`/api`) || PathPrefix(`/ws`))
+    - "traefik.http.routers.ghostroom-server.entrypoints=websecure"
+    - "traefik.http.routers.ghostroom-server.tls.certresolver=myresolver"
+    - "traefik.http.services.ghostroom-server.loadbalancer.server.port=3000"
+
+    env_file:
+      - ./server/.env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsSL http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s 
+    depends_on:
+      - ghostroom-db
+    
+    restart: unless-stopped
+    networks:
+      - default
+
+  ghostroom-client:
+    build: ./client
+    container_name: ghostroom-client
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ghostroom-client.rule=Host(`ghostroom.stacktemple.com`)"
+      - "traefik.http.services.ghostroom-client.loadbalancer.server.port=80"
+      - "traefik.http.routers.ghostroom-client.entrypoints=websecure"
+      - "traefik.http.routers.ghostroom-client.tls.certresolver=myresolver"
+    restart: unless-stopped
+    networks:
+      - default
+
+volumes:
+  ghostroom-data:
+
+networks:
+  default:
+    name: stacktemple_network
+    external: true
