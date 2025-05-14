@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 export const RoomsList = () => {
   const { data, isLoading, isError } = useTodayRooms();
   const [joinRoom, setJoinRoom] = useState<Room | null>(null);
+  const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
 
@@ -31,27 +32,47 @@ export const RoomsList = () => {
         Loading rooms...
       </p>
     );
-  if (isError) {
+
+  if (isError)
     return (
       <p className="text-error text-center text-sm">
         Failed to load rooms. Please try again.
       </p>
     );
-  }
 
-  if ((data as Room[])?.length === 0)
+  const rooms = (data as Room[])?.filter((room) =>
+    room.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (rooms.length === 0)
     return (
-      <p className="text-text-secondary text-center text-sm opacity-75">
-        No rooms available today. <br />
-        <span className="text-primary font-medium">
-          Be the first to create one!
-        </span>
-      </p>
+      <div className="space-y-2">
+        <input
+          type="text"
+          placeholder="Search rooms..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-3 py-2 border rounded text-sm"
+        />
+        <p className="text-text-secondary text-center text-sm opacity-75">
+          No rooms match your search. <br />
+          <span className="text-primary font-medium">
+            Be the first to create one!
+          </span>
+        </p>
+      </div>
     );
 
   return (
     <div className="space-y-4">
-      {(data as Room[]).map((room) => (
+      <input
+        type="text"
+        placeholder="Search rooms..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full px-3 py-2 border rounded text-sm"
+      />
+      {rooms.map((room) => (
         <RoomCard
           key={room.id}
           name={room.name}
@@ -60,7 +81,6 @@ export const RoomsList = () => {
           onJoin={() => handleJoin(room)}
         />
       ))}
-
       {joinRoom && (
         <JoinRoomModal
           roomName={joinRoom.name}
