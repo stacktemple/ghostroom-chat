@@ -40,7 +40,7 @@ export default function ChatRoom() {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden min-h-0">
+    <div className="mycont flex flex-col flex-1 overflow-hidden min-h-0 bg-surface-muted rounded-xl shadow-sm m-2">
       <div className="p-4 text-xl font-semibold text-text-primary shrink-0">
         Chat Room: {roomName}
       </div>
