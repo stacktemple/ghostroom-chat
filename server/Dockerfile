@@ -14,7 +14,7 @@ RUN go build -o server .
 FROM alpine:3.21
 
 # Install timezone data
-RUN apk add --no-cache tzdata
+RUN apk add --no-cache tzdata curl
 
 WORKDIR /app
 
